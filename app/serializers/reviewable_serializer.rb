@@ -19,7 +19,7 @@ class ReviewableSerializer < ApplicationSerializer
 
   has_one :created_by, serializer: BasicUserSerializer, root: 'users'
   has_one :target_created_by, serializer: BasicUserSerializer, root: 'users'
-  has_one :topic, serializer: BasicTopicSerializer
+  has_one :topic, serializer: ListableTopicSerializer
   has_many :editable_fields, serializer: ReviewableEditableFieldSerializer, embed: :objects
   has_many :reviewable_scores, serializer: ReviewableScoreSerializer
   has_many :bundled_actions, serializer: ReviewableBundledActionSerializer

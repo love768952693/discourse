@@ -1,9 +1,11 @@
 import computed from "ember-addons/ember-computed-decorators";
 
 export default Ember.Controller.extend({
-  queryParams: ["min_score", "type"],
+  queryParams: ["min_score", "type", "status", "category_id"],
   type: null,
+  status: "pending",
   min_score: null,
+  category_id: null,
   reviewables: null,
 
   @computed
@@ -13,6 +15,13 @@ export default Ember.Controller.extend({
         id: `Reviewable${type.classify()}`,
         name: I18n.t(`review.types.reviewable_${type}.title`)
       };
+    });
+  },
+
+  @computed
+  statuses() {
+    return ["pending", "approved", "rejected", "ignored"].map(id => {
+      return { id, name: I18n.t(`review.statuses.${id}.title`) };
     });
   },
 
@@ -31,6 +40,8 @@ export default Ember.Controller.extend({
     refresh() {
       this.set("type", this.get("filterType"));
       this.set("min_score", this.get("filterScore"));
+      this.set("status", this.get("filterStatus"));
+      this.set("category_id", this.get("filterCategoryId"));
       this.send("refreshRoute");
     },
 

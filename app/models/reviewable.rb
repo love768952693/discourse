@@ -243,12 +243,13 @@ class Reviewable < ActiveRecord::Base
     list_for(user).count
   end
 
-  def self.list_for(user, status: :pending, type: nil, limit: nil, offset: nil, min_score: nil)
+  def self.list_for(user, status: :pending, type: nil, limit: nil, offset: nil, min_score: nil, category_id: nil)
     min_score ||= SiteSetting.min_score_default_visibility
 
     return [] if user.blank?
     result = viewable_by(user).where(status: statuses[status])
     result = result.where(type: type) if type
+    result = result.where(category_id: category_id) if category_id
     result = result.where("score >= ?", min_score) if min_score
     result = result.limit(limit) if limit
     result = result.offset(offset) if offset

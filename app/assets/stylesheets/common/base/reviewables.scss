@@ -48,9 +48,14 @@
     font-size: 0.9em;
   }
 }
+
 .reviewable-item {
   margin-bottom: 1em;
   border-bottom: 1px solid dark-light-choose($primary-low, $secondary-low);
+
+  .topic-statuses {
+    float: none;
+  }
 
   .reviewable-meta-data {
     color: dark-light-choose($primary-medium, $secondary-medium);
@@ -67,6 +72,12 @@
         color: dark-light-choose($primary-medium, $secondary-medium);
       }
       margin-right: 1em;
+    }
+    .score {
+      margin-right: 1em;
+    }
+    .status {
+      color: dark-light-choose($primary-high, $secondary-high);
     }
   }
 

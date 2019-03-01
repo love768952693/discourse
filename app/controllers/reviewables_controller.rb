@@ -15,10 +15,22 @@ class ReviewablesController < ApplicationController
       end
     end
 
-    total_rows = Reviewable.list_for(current_user, status: :pending, min_score: min_score).count
+    status = (params[:status] || 'pending').to_sym
+    raise Discourse::InvalidParameter.new(:status) unless Reviewable.statuses[status].present?
+
+    category_id = nil
+    category_id = params[:category_id].to_i if params[:category_id]
+
+    total_rows = Reviewable.list_for(
+      current_user,
+      status: status,
+      category_id: category_id,
+      min_score: min_score
+    ).count
     reviewables = Reviewable.list_for(
       current_user,
-      status: :pending,
+      status: status,
+      category_id: category_id,
       limit: PER_PAGE,
       offset: offset,
       type: params[:type],
@@ -31,7 +43,7 @@ class ReviewablesController < ApplicationController
       reviewables: reviewables.map do |r|
         result = r.serializer.new(r, root: nil, hash: hash, scope: guardian).as_json
         hash[:bundled_actions].uniq!
-        hash['actions'].uniq!
+        (hash['actions'] || []).uniq!
         result
       end,
       meta: {
@@ -39,7 +51,9 @@ class ReviewablesController < ApplicationController
         load_more_reviewables: review_path(offset: offset + PER_PAGE, min_score: min_score),
         min_score: min_score,
         type: params[:type],
-        types: meta_types
+        category_id: category_id,
+        types: meta_types,
+        status: status
       }
     }
     json.merge!(hash)

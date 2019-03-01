@@ -77,6 +77,46 @@ describe ReviewablesController do
         expect(response.code).to eq("500")
       end
 
+      it "supports filtering by status" do
+        Fabricate(:reviewable, status: Reviewable.statuses[:approved])
+
+        get "/review.json?type=ReviewableUser&status=pending"
+        expect(response.code).to eq("200")
+        json = ::JSON.parse(response.body)
+        expect(json['reviewables']).to be_blank
+
+        Fabricate(:reviewable, status: Reviewable.statuses[:approved])
+        get "/review.json?type=ReviewableUser&status=approved"
+        expect(response.code).to eq("200")
+        json = ::JSON.parse(response.body)
+        expect(json['reviewables']).to be_present
+      end
+
+      it "raises an error with an invalid status" do
+        get "/review.json?status=xyz"
+        expect(response.code).to eq("500")
+      end
+
+      it "supports filtering by category_id" do
+        other_category = Fabricate(:category)
+        r = Fabricate(:reviewable)
+        get "/review.json?category_id=#{other_category.id}"
+        expect(response.code).to eq("200")
+        json = ::JSON.parse(response.body)
+        expect(json['reviewables']).to be_blank
+
+        get "/review.json?category_id=#{r.category_id}"
+        expect(response.code).to eq("200")
+        json = ::JSON.parse(response.body)
+        expect(json['reviewables']).to be_present
+
+        # By default all categories are returned
+        get "/review.json"
+        expect(response.code).to eq("200")
+        json = ::JSON.parse(response.body)
+        expect(json['reviewables']).to be_present
+      end
+
       it "will use the ReviewableUser serializer for its fields" do
         SiteSetting.must_approve_users = true
         user = Fabricate(:user)

@@ -17,15 +17,10 @@
     </span>
   </div>
 
-  <div class='post-topic'>
-    {{#if reviewable.topic}}
-      {{i18n "review.topic"}}
-      {{topic-link reviewable.topic}}
-    {{else}}
-      {{i18n "review.new_topic"}}
-      {{reviewable.payload.title}}
-    {{/if}}
-  </div>
+  {{#reviewable-topic-link topic=reviewable.topic}}
+    {{i18n "review.new_topic"}}
+    {{reviewable.payload.title}}
+  {{/reviewable-topic-link}}
 
   <div class='post-body'>
     {{cook-text reviewable.payload.raw}}

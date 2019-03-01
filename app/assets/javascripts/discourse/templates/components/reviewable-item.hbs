@@ -9,6 +9,17 @@
       {{#link-to 'review.show' reviewable.id}}{{age-with-tooltip reviewable.created_at}}{{/link-to}}
     </div>
     <div class='score' title={{i18n "review.scores.score"}}>{{displayScore}}</div>
+
+    <div class='status'>
+      {{#if reviewable.approved}}
+        {{d-icon "check"}} {{i18n "review.statuses.approved.title"}}
+      {{else if reviewable.rejected}}
+        {{d-icon "times"}} {{i18n "review.statuses.rejected.title"}}
+      {{else if reviewable.ignored}}
+        {{d-icon "external-link-alt"}} {{i18n "review.statuses.ignored.title"}}
+      {{/if}}
+
+    </div>
   </div>
 
   <div class='reviewable-contents'>
@@ -47,7 +58,10 @@
         label="review.cancel"}}
     {{else}}
       {{#each reviewable.bundled_actions as |bundle|}}
-        {{reviewable-bundled-action bundle=bundle performAction=(action "perform")}}
+        {{reviewable-bundled-action
+          bundle=bundle
+          performAction=(action "perform")
+          reviewableUpdating=updating}}
       {{/each}}
 
       {{#if reviewable.can_edit}}

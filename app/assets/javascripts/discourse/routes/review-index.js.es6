@@ -10,6 +10,8 @@ export default Discourse.Route.extend({
       reviewables: model,
       type: meta.type,
       filterType: meta.type,
+      filterStatus: meta.status,
+      filterCategoryId: meta.category_id,
       min_score: meta.min_score,
       filterScore: meta.min_score
     });
